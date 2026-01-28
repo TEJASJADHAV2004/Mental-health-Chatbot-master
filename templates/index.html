@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> Psychiatrist Bot</title>
+  <link rel="shortcut icon" href="static/img/mhcicon.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <style>
+    /* Popup styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .popup-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      max-width: 400px;
+      width: 90%;
+      animation: popupSlideIn 0.5s ease-out;
+    }
+    
+    @keyframes popupSlideIn {
+      from {
+        transform: scale(0.7) translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .popup-title {
+      color: white;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .popup-subtitle {
+      color: #f0f0f0;
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    
+    .popup-button {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .popup-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .robot-icon {
+      font-size: 3em;
+      color: white;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Popup Modal -->
+<div id="welcomePopup" class="popup-overlay">
+  <div class="popup-content">
+    <div class="robot-icon">🤖</div>
+    <h1 class="popup-title">Psychiatrist Bot</h1>
+    <p class="popup-subtitle">Welcome to your personal mental health companion. I'm here to listen, support, and help you through your journey.</p>
+    <button class="popup-button" onclick="closePopup()">Start Chatting</button>
+  </div>
+</div>
+
+<div class="title">
+  <svg viewBox="0 0 640 512" title="robot">
+        <path fill="currentColor" d="M32,224H64V416H32A31.96166,31.96166,0,0,1,0,384V256A31.96166,31.96166,0,0,1,32,224Zm512-48V448a64.06328,64.06328,0,0,1-64,64H160a64.06328,64.06328,0,0,1-64-64V176a79.974,79.974,0,0,1,80-80H288V32a32,32,0,0,1,64,0V96H464A79.974,79.974,0,0,1,544,176ZM264,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,264,256Zm-8,128H192v32h64Zm96,0H288v32h64ZM456,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,456,256Zm-8,128H384v32h64ZM640,256V384a31.96166,31.96166,0,0,1-32,32H576V224h32A31.96166,31.96166,0,0,1,640,256Z" />
+      </svg>
+  <h3>Chatbot</h3>
+ <div>
+<div id="chatbot" class="main-card collapsed">
+  <button id="chatbot_toggle">
+    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15 4v7H5.17l-.59.59-.58.58V4h11m1-2H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm5 4h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+</svg>
+  </button>
+  <div class="main-title">
+    <div>
+      <svg viewBox="0 0 640 512" title="robot">
+        <path fill="currentColor" d="M32,224H64V416H32A31.96166,31.96166,0,0,1,0,384V256A31.96166,31.96166,0,0,1,32,224Zm512-48V448a64.06328,64.06328,0,0,1-64,64H160a64.06328,64.06328,0,0,1-64-64V176a79.974,79.974,0,0,1,80-80H288V32a32,32,0,0,1,64,0V96H464A79.974,79.974,0,0,1,544,176ZM264,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,264,256Zm-8,128H192v32h64Zm96,0H288v32h64ZM456,256a40,40,0,1,0-40,40A39.997,39.997,0,0,0,456,256Zm-8,128H384v32h64ZM640,256V384a31.96166,31.96166,0,0,1-32,32H576V224h32A31.96166,31.96166,0,0,1,640,256Z" />
+      </svg>
+    </div>
+    <span>
+      <i class="fas fa-bug"></i> Psychiatrist Bot <i class="fas fa-bug"></i>
+
+    </span>
+
+  </div>
+  <!-- partial:index.partial.html -->
+
+  <main class="msger-chat">
+    <div class="msg left-msg">
+      <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"></div>
+
+        <div class="msg-bubble">
+          <div class="msg-info">
+            <div class="msg-info-name"> Psychiatrist Bot</div>
+          
+            <div class="msg-info-time"><time id="clock"></time></div>
+
+
+
+
+          </div>
+          <div class="msg-text">
+            Welcome to Psychiatrist, a safe and supportive space where you can share your thoughts and feelings without fear of judgement.
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    <form class="msger-inputarea">
+      <input type="text" class="msger-input" id="textInput" placeholder="Enter your message...">
+      <button type="submit" class="msger-send-btn">Send</button>
+    </form>
+  <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
+  <script src="{{ url_for('static', filename='js/bot.js') }}"></script>
+  
+  <script>
+    function closePopup() {
+      document.getElementById('welcomePopup').style.display = 'none';
+      // Automatically expand the chatbot when popup is closed
+      const chatbot = document.getElementById('chatbot');
+      const toggle = document.getElementById('chatbot_toggle');
+      if (chatbot.classList.contains('collapsed')) {
+        chatbot.classList.remove('collapsed');
+        toggle.querySelector('svg:first-child').style.display = 'none';
+        toggle.querySelector('svg:last-child').style.display = 'block';
+      }
+    }
+    
+    // Show popup when page loads
+    window.addEventListener('load', function() {
+      document.getElementById('welcomePopup').style.display = 'flex';
+    });
+  </script>
+</body>
+</html>
