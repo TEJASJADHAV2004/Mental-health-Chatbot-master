@@ -1,7 +1,9 @@
-Flask==3.0.0
-keras==2.11.0
-nltk==3.8.1
-numpy==1.22.2
+streamlit>=1.28.0
+nltk>=3.8.1
+numpy>=1.24.0
+scikit-learn>=1.3.0
+tensorflow>=2.13.0
+keras>=3.0.0
 sacremoses
 sentencepiece
 spacy==3.7.2
